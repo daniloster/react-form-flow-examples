@@ -6,16 +6,23 @@ import Validation from './Validation';
 
 const InputFieldLayout = styled.div`
   padding: 0 0 10px 0;
+
+  display: ${({ layout }) => layout};
+  grid-template-rows: auto;
+  grid-template-columns: min-content minmax(1px, 100%);
+  grid-column-gap: 10px;
+
   label > span {
     display: block;
   }
   .InputFieldLayout__validations {
-    display: block;
+    display: ${({ layout }) => layout};
+    align-items: end;
   }
 `;
 
 export default function InputField(props) {
-  const { label: labelText, onChange, validations, value } = props;
+  const { label: labelText, layout, onChange, type, validations, value } = props;
   const id = useRef(uuid.v4());
   const [isVisited, setIsVisited] = useState(false);
   const onBlur = useCallback(() => {
@@ -23,10 +30,10 @@ export default function InputField(props) {
   }, []);
 
   return (
-    <InputFieldLayout>
+    <InputFieldLayout layout={layout}>
       <label htmlFor={id.current}>
         <span>{labelText}</span>
-        <input id={id.current} type="text" onBlur={onBlur} onChange={onChange} value={value} />
+        <input id={id.current} type={type} onBlur={onBlur} onChange={onChange} value={value} />
       </label>
       <div className="InputFieldLayout__validations">
         {isVisited && <Validation validations={validations} />}
@@ -35,15 +42,21 @@ export default function InputField(props) {
   );
 }
 
+InputField.Layout = InputFieldLayout;
+
 InputField.propTypes = {
   label: PropTypes.string,
+  layout: PropTypes.oneOf(['block', 'grid']),
   onChange: PropTypes.func.isRequired,
+  type: PropTypes.string,
   validations: PropTypes.arrayOf(PropTypes.shape({})),
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 InputField.defaultProps = {
   label: null,
+  layout: 'block',
+  type: 'text',
   validations: [],
   value: '',
 };
