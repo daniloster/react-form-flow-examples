@@ -11,22 +11,19 @@ const ValidationLayout = styled.section`
   }
 `;
 
-export default function Validation({ isColored = false, label, validations = [] }) {
+export default function Validation({ isColored = false, label, errors = [] }) {
   return (
     <ValidationLayout>
       {!!label && (
-        <LabelFeedback isColored={isColored} isValid={!validations.some(({ isValid }) => !isValid)}>
+        <LabelFeedback isColored={isColored} isValid={!errors.some(({ isValid }) => !isValid)}>
           {label}
         </LabelFeedback>
       )}
-      {validations.map(
-        ({ key, isValid, message }) =>
-          !isValid && (
-            <div className="ValidationLayout__message" key={key}>
-              {message}
-            </div>
-          )
-      )}
+      {errors.map(({ key, message }) => (
+        <div className="ValidationLayout__message" key={key}>
+          {message}
+        </div>
+      ))}
     </ValidationLayout>
   );
 }

@@ -1,7 +1,6 @@
 import React, { useCallback, useRef } from 'react';
-import PropTypes from 'prop-types';
-import uuid from 'uuid';
 import styled from 'styled-components';
+import uuid from 'uuid';
 import Validation from './Validation';
 
 const CheckboxFieldLayout = styled.div`
@@ -27,11 +26,13 @@ const CheckboxFieldLayout = styled.div`
 export default function CheckboxField({
   checkedValue,
   label: labelText,
-  onChangeValue,
-  validations,
-  value,
+  field,
+  errors,
+  submitted,
+  touched,
 }) {
   const id = useRef(uuid.v4());
+  const { onBlur, onChangeValue, value } = field;
   const onChange = useCallback(() => {
     const treatedValue = value || [];
     const hasValue = treatedValue.includes(checkedValue);
@@ -49,33 +50,19 @@ export default function CheckboxField({
         <input
           id={id.current}
           type="checkbox"
+          onBlur={onBlur}
           onChange={onChange}
           checked={(value || []).includes(checkedValue)}
         />
       </label>
       <div className="CheckboxFieldLayout__validations">
-        <Validation validations={validations} />
+        {(submitted || touched) && <Validation errors={errors} />}
       </div>
     </CheckboxFieldLayout>
   );
 }
 
-CheckboxField.propTypes = {
-  checkedValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
-    .isRequired,
-  label: PropTypes.string,
-  onChangeValue: PropTypes.func.isRequired,
-  validations: PropTypes.arrayOf(PropTypes.shape({})),
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-    PropTypes.bool,
-    PropTypes.arrayOf(PropTypes.any),
-  ]),
-};
-
 CheckboxField.defaultProps = {
   label: null,
-  validations: [],
-  value: '',
+  errors: [],
 };

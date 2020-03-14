@@ -1,7 +1,6 @@
-import React, { useCallback, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import uuid from 'uuid';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
+import uuid from 'uuid';
 import Validation from './Validation';
 
 const InputFieldLayout = styled.div`
@@ -22,21 +21,17 @@ const InputFieldLayout = styled.div`
 `;
 
 export default function InputField(props) {
-  const { label: labelText, layout, onChange, type, validations, value } = props;
+  const { label: labelText, layout, type, errors, field, submitted, touched } = props;
   const id = useRef(uuid.v4());
-  const [isVisited, setIsVisited] = useState(false);
-  const onBlur = useCallback(() => {
-    setIsVisited(true);
-  }, []);
 
   return (
     <InputFieldLayout layout={layout}>
       <label htmlFor={id.current}>
         <span>{labelText}</span>
-        <input id={id.current} type={type} onBlur={onBlur} onChange={onChange} value={value} />
+        <input id={id.current} type={type} {...field} value={field.value || ''} />
       </label>
       <div className="InputFieldLayout__validations">
-        {isVisited && <Validation validations={validations} />}
+        {(submitted || touched) && <Validation errors={errors} />}
       </div>
     </InputFieldLayout>
   );
@@ -44,19 +39,9 @@ export default function InputField(props) {
 
 InputField.Layout = InputFieldLayout;
 
-InputField.propTypes = {
-  label: PropTypes.string,
-  layout: PropTypes.oneOf(['block', 'grid']),
-  onChange: PropTypes.func.isRequired,
-  type: PropTypes.string,
-  validations: PropTypes.arrayOf(PropTypes.shape({})),
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-};
-
 InputField.defaultProps = {
   label: null,
   layout: 'block',
   type: 'text',
-  validations: [],
-  value: '',
+  errors: [],
 };

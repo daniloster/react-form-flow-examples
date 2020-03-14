@@ -1,7 +1,6 @@
 import React, { useCallback, useRef } from 'react';
-import PropTypes from 'prop-types';
-import uuid from 'uuid';
 import styled from 'styled-components';
+import uuid from 'uuid';
 import Validation from './Validation';
 
 const DropdownFieldLayout = styled.div`
@@ -26,15 +25,17 @@ const DropdownFieldLayout = styled.div`
 
 export default function DropdownField({
   empty,
+  errors,
+  field,
   formatText,
   formatValue,
   label: labelText,
-  onChangeValue,
   options,
-  validations,
-  value,
+  submitted,
+  touched,
 }) {
   const id = useRef(uuid.v4());
+  const { onBlur, onChangeValue, value = '' } = field;
   const onChange = useCallback(
     e => {
       const { value: optionValue } = e.target;
@@ -48,7 +49,7 @@ export default function DropdownField({
     <DropdownFieldLayout>
       <label htmlFor={id.current}>
         <span>{labelText}</span>
-        <select onChange={onChange} value={formatValue(value)}>
+        <select onBlur={onBlur} onChange={onChange} value={formatValue(value)}>
           {empty && <option value={formatValue(empty)}>{formatText(empty)}</option>}
           {Boolean(options && options.length) &&
             options.map(option => {
@@ -64,26 +65,14 @@ export default function DropdownField({
         </select>
       </label>
       <div className="DropdownFieldLayout__validations">
-        <Validation validations={validations} />
+        {(submitted || touched) && <Validation errors={errors} />}
       </div>
     </DropdownFieldLayout>
   );
 }
 
-DropdownField.propTypes = {
-  empty: PropTypes.oneOf([PropTypes.any]),
-  formatText: PropTypes.func.isRequired,
-  formatValue: PropTypes.func.isRequired,
-  label: PropTypes.string,
-  onChangeValue: PropTypes.func.isRequired,
-  options: PropTypes.arrayOf(PropTypes.any).isRequired,
-  validations: PropTypes.arrayOf(PropTypes.shape({})),
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
-};
-
 DropdownField.defaultProps = {
   empty: null,
   label: null,
-  validations: [],
-  value: '',
+  errors: [],
 };

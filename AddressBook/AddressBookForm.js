@@ -1,14 +1,14 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { useFormFlowItem } from '../../src';
+import { useFormFlowField } from '../../src';
 import InputField from '../fields/InputField';
 
 const AddressBookFormLayout = styled.div``;
 
 export default function AddressBookForm() {
-  const nameField = useFormFlowItem('name');
-  const emailField = useFormFlowItem('email');
-  const birthdayField = useFormFlowItem('birthday');
+  const nameField = useFormFlowField('name');
+  const emailField = useFormFlowField('email');
+  const birthdayField = useFormFlowField('birthday');
 
   return (
     <AddressBookFormLayout>

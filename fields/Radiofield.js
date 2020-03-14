@@ -1,7 +1,6 @@
-import React, { useCallback, useRef } from 'react';
-import PropTypes from 'prop-types';
-import uuid from 'uuid';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
+import uuid from 'uuid';
 import Validation from './Validation';
 
 const RadioFieldLayout = styled.div`
@@ -28,14 +27,12 @@ export default function RadioField({
   checkedValue,
   name,
   label: labelText,
-  onChangeValue,
-  validations,
-  value,
+  errors,
+  field,
+  submitted,
+  touched,
 }) {
   const id = useRef(uuid.v4());
-  const onChange = useCallback(() => {
-    onChangeValue(checkedValue);
-  }, [checkedValue, onChangeValue]);
 
   return (
     <RadioFieldLayout>
@@ -45,29 +42,19 @@ export default function RadioField({
           id={id.current}
           name={name}
           type="radio"
-          onChange={onChange}
-          checked={value === checkedValue}
+          {...field}
+          value={checkedValue}
+          checked={field.value === checkedValue}
         />
       </label>
       <div className="RadioFieldLayout__validations">
-        <Validation validations={validations} />
+        {(submitted || touched) && <Validation errors={errors} />}
       </div>
     </RadioFieldLayout>
   );
 }
 
-RadioField.propTypes = {
-  checkedValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool])
-    .isRequired,
-  name: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  onChangeValue: PropTypes.func.isRequired,
-  validations: PropTypes.arrayOf(PropTypes.shape({})),
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
-};
-
 RadioField.defaultProps = {
   label: null,
-  validations: [],
-  value: '',
+  errors: [],
 };
