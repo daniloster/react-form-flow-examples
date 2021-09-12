@@ -20,9 +20,14 @@ export default function Validation({ isColored = false, label, errors = [] }) {
         </LabelFeedback>
       )}
       {errors.map(({ key, message }) => (
-        <div className="ValidationLayout__message" key={key}>
-          {message}
-        </div>
+        <React.Fragment key={key}>
+          <div className="ValidationLayout__message">
+            key: {key}
+          </div>
+          <div className="ValidationLayout__message">
+            message: {message}
+          </div>
+        </React.Fragment>
       ))}
     </ValidationLayout>
   );
